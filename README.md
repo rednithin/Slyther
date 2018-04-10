@@ -1,3 +1,3 @@
-sudo npm i -g concurrently
+`sudo npm i -g concurrently`
 
-yarn main
+`yarn main`
