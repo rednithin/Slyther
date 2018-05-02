@@ -1,4 +1,5 @@
 const electron = require("electron");
+const fse = require("fs-extra");
 const fs = require("fs");
 const ipcMain = electron.ipcMain;
 // Module to control application life.
@@ -57,8 +58,10 @@ app.on("activate", function() {
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
 
+const passPath = "./database/password.txt";
+
 ipcMain.on("userIsRegistered", (event, data) => {
-  if (fs.existsSync("./database/password.txt")) {
+  if (fse.pathExistsSync(passPath)) {
     mainWindow.webContents.send("response::userIsRegistered", {
       registered: true
     });
@@ -67,4 +70,9 @@ ipcMain.on("userIsRegistered", (event, data) => {
       registered: false
     });
   }
+});
+
+ipcMain.on("setUserPassword", (event, data) => {
+  fse.removeSync(passPath);
+  fse.writeFileSync(passPath, data.password);
 });

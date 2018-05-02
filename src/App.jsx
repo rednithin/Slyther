@@ -1,15 +1,15 @@
 import React, { Component, Fragment } from "react";
-import { Route, Switch, NavLink } from "react-router-dom";
+import { Route, Switch, NavLink, Redirect } from "react-router-dom";
 import { Layout } from "antd";
-
 import SetPassword from "./components/SetPassword.jsx";
 import Login from "./components/Login.jsx";
-
+import "./App.css";
 const { Header, Sider, Content } = Layout;
 
 class App extends Component {
   state = {
-    userIsRegistered: false
+    userIsRegistered: false,
+    isLoggedIn: false
   };
   componentDidMount() {
     const electron = window.require("electron");
@@ -23,11 +23,22 @@ class App extends Component {
     });
   }
   render() {
-    let navLinks = null;
-    let routes = <Route path="/" component={SetPassword} />;
-    if (this.state.userIsRegistered === true) {
-      routes = <Route path="/" component={Login} />;
+    if (this.state.userIsRegistered === false) {
+      return <SetPassword />;
     }
+    if (
+      this.state.userIsRegistered === true &&
+      this.state.isLoggedIn === false
+    ) {
+      return <Login />;
+    }
+    let routes = (
+      <Switch>
+        <Route path="/" exact component={Login} />
+        <Redirect from="/*" to="/" />
+      </Switch>
+    );
+    let navLinks = null;
     return (
       <Layout style={{ height: "100vh" }}>
         <Header
@@ -36,7 +47,7 @@ class App extends Component {
             paddingLeft: "30px"
           }}
         >
-          Slyther
+          <span>Slyther</span>
         </Header>
         <Layout>
           <Sider width={220} style={{ backgroundColor: "white" }}>
