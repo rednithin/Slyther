@@ -76,3 +76,16 @@ ipcMain.on("setUserPassword", (event, data) => {
   fse.removeSync(passPath);
   fse.writeFileSync(passPath, data.password);
 });
+
+ipcMain.on("checkUserPassword", (event, data) => {
+  const actualPassword = fse.readFileSync(passPath).toString();
+  if (data.password === actualPassword) {
+    mainWindow.webContents.send("response::checkUserPassword", {
+      access: true
+    });
+  } else {
+    mainWindow.webContents.send("response::checkUserPassword", {
+      access: false
+    });
+  }
+});

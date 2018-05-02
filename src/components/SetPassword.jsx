@@ -1,16 +1,22 @@
 import React, { Component } from "react";
 import { Form, Icon, Input, Button, Checkbox } from "antd";
+import { observer, inject } from "mobx-react";
+const electron = window.require("electron");
+const { ipcRenderer } = electron;
+
 const FormItem = Form.Item;
 
+@inject("myStore")
+@observer
 class NormalLoginForm extends Component {
   handleSubmit = e => {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (!err) {
         console.log("Received values of form: ", values);
-        const electron = window.require("electron");
-        const { ipcRenderer } = electron;
+
         ipcRenderer.send("setUserPassword", values);
+        this.props.myStore.userIsRegistered = true;
       }
     });
   };

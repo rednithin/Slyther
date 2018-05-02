@@ -1,44 +1,63 @@
 import React, { Component, Fragment } from "react";
 import { Route, Switch, NavLink, Redirect } from "react-router-dom";
-import { Layout } from "antd";
+import { Layout, Menu } from "antd";
+import { observer, inject } from "mobx-react";
+
+import "./App.css";
 import SetPassword from "./components/SetPassword.jsx";
 import Login from "./components/Login.jsx";
-import "./App.css";
+import Dashboard from "./components/Dashboard.jsx";
+import Settings from "./components/Settings.jsx";
+
+const electron = window.require("electron");
+const { ipcRenderer } = electron;
+
+const { Item } = Menu;
 const { Header, Sider, Content } = Layout;
 
+@inject("myStore")
+@observer
 class App extends Component {
-  state = {
-    userIsRegistered: false,
-    isLoggedIn: false
-  };
   componentDidMount() {
-    const electron = window.require("electron");
-    const { ipcRenderer } = electron;
     ipcRenderer.send("userIsRegistered", null);
     ipcRenderer.on("response::userIsRegistered", (event, data) => {
       console.log(data.registered);
       if (data.registered === true) {
-        this.setState({ userIsRegistered: true });
+        this.props.myStore.userIsRegistered = true;
       }
     });
   }
   render() {
-    if (this.state.userIsRegistered === false) {
+    if (this.props.myStore.userIsRegistered === false) {
       return <SetPassword />;
     }
     if (
-      this.state.userIsRegistered === true &&
-      this.state.isLoggedIn === false
+      this.props.myStore.userIsRegistered === true &&
+      this.props.myStore.isLoggedIn === false
     ) {
       return <Login />;
     }
     let routes = (
       <Switch>
-        <Route path="/" exact component={Login} />
-        <Redirect from="/*" to="/" />
+        <Route path="/" exact component={Dashboard} />
+        <Route path="/settings" exact component={Settings} />
+        <Redirect from="*" to="/" />
       </Switch>
     );
-    let navLinks = null;
+    let navLinks = (navLinks = (
+      <Menu>
+        <Item>
+          <NavLink to="/" exact>
+            Dashboard
+          </NavLink>
+        </Item>
+        <Item>
+          <NavLink to="/settings" exact>
+            Settings
+          </NavLink>
+        </Item>
+      </Menu>
+    ));
     return (
       <Layout style={{ height: "100vh" }}>
         <Header

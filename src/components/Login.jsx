@@ -1,13 +1,26 @@
 import React, { Component } from "react";
 import { Form, Icon, Input, Button, Checkbox } from "antd";
-const FormItem = Form.Item;
+import { inject, observer } from "mobx-react";
 
+const FormItem = Form.Item;
+const electron = window.require("electron");
+const { ipcRenderer } = electron;
+
+@inject("myStore")
+@observer
 class NormalLoginForm extends Component {
+  componentDidMount() {
+    ipcRenderer.on("response::checkUserPassword", (event, data) => {
+      if (data.access) this.props.myStore.isLoggedIn = true;
+    });
+  }
   handleSubmit = e => {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (!err) {
         console.log("Received values of form: ", values);
+
+        ipcRenderer.send("checkUserPassword", values);
       }
     });
   };

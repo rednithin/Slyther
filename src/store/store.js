@@ -5,4 +5,4 @@ class Store {
   @observable isLoggedIn = false;
 }
 
-export default new Store();
+export default Store;
