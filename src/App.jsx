@@ -21,10 +21,13 @@ class App extends Component {
   componentDidMount() {
     ipcRenderer.send("userIsRegistered", null);
     ipcRenderer.on("response::userIsRegistered", (event, data) => {
-      console.log(data.registered);
       if (data.registered === true) {
         this.props.myStore.userIsRegistered = true;
       }
+    });
+    ipcRenderer.send("getQuality", null);
+    ipcRenderer.on("response::getQuality", (event, data) => {
+      this.props.myStore.quality = data.quality;
     });
   }
   render() {

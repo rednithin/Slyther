@@ -59,6 +59,7 @@ app.on("activate", function() {
 // code. You can also put them in separate files and require them here.
 
 const passPath = "./database/password.txt";
+const qualityPath = "./database/quality.txt";
 
 ipcMain.on("userIsRegistered", (event, data) => {
   if (fse.pathExistsSync(passPath)) {
@@ -75,6 +76,24 @@ ipcMain.on("userIsRegistered", (event, data) => {
 ipcMain.on("setUserPassword", (event, data) => {
   fse.removeSync(passPath);
   fse.writeFileSync(passPath, data.password);
+});
+
+ipcMain.on("setQuality", (event, data) => {
+  fse.removeSync(qualityPath);
+  fse.writeFileSync(qualityPath, data.quality);
+});
+
+ipcMain.on("getQuality", () => {
+  if (fse.pathExistsSync(qualityPath)) {
+    const quality = fse.readFileSync(qualityPath).toString();
+    mainWindow.webContents.send("response::getQuality", {
+      quality
+    });
+  } else {
+    mainWindow.webContents.send("response::getQuality", {
+      quality: "480"
+    });
+  }
 });
 
 ipcMain.on("checkUserPassword", (event, data) => {

@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Form, Icon, Input, Button, Checkbox } from "antd";
+import { Form, Icon, Input, Button, Checkbox, notification } from "antd";
 import { observer, inject } from "mobx-react";
 const electron = window.require("electron");
 const { ipcRenderer } = electron;
@@ -16,6 +16,9 @@ class NormalLoginForm extends Component {
         console.log("Received values of form: ", values);
 
         ipcRenderer.send("setUserPassword", values);
+        notification.success({
+          message: "Success"
+        });
         this.props.myStore.userIsRegistered = true;
       }
     });

@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Form, Icon, Input, Button, Checkbox } from "antd";
+import { Form, Icon, Input, Button, Checkbox, notification } from "antd";
 import { inject, observer } from "mobx-react";
 
 const FormItem = Form.Item;
@@ -11,7 +11,16 @@ const { ipcRenderer } = electron;
 class NormalLoginForm extends Component {
   componentDidMount() {
     ipcRenderer.on("response::checkUserPassword", (event, data) => {
-      if (data.access) this.props.myStore.isLoggedIn = true;
+      if (data.access) {
+        this.props.myStore.isLoggedIn = true;
+        notification.success({
+          message: "Success"
+        });
+      } else {
+        notification.error({
+          message: "Wrong Password"
+        });
+      }
     });
   }
   handleSubmit = e => {
