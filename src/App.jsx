@@ -63,29 +63,19 @@ class App extends Component {
     ));
     return (
       <Layout style={{ height: "100vh" }}>
-        <Header
+        <Sider width={220} style={{ backgroundColor: "white" }}>
+          {navLinks}
+        </Sider>
+        <Content
           style={{
-            backgroundColor: "white",
-            paddingLeft: "30px"
+            padding: "14px",
+            borderLeftColor: "gray",
+            borderLeftWidth: "2px",
+            height: "100%"
           }}
         >
-          <span>Slyther</span>
-        </Header>
-        <Layout>
-          <Sider width={220} style={{ backgroundColor: "white" }}>
-            {navLinks}
-          </Sider>
-          <Content
-            style={{
-              padding: "14px",
-              borderLeftColor: "gray",
-              borderLeftWidth: "2px",
-              height: "100%"
-            }}
-          >
-            {routes}
-          </Content>
-        </Layout>
+          {routes}
+        </Content>
       </Layout>
     );
   }

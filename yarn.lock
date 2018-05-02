@@ -4918,6 +4918,10 @@ node-fetch@^1.0.1:
     encoding "^0.1.11"
     is-stream "^1.0.1"
 
+node-fetch@^2.0.0:
+  version "2.1.2"
+  resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.1.2.tgz#ab884e8e7e57e38a944753cec706f788d1768bb5"
+
 node-forge@0.7.1:
   version "0.7.1"
   resolved "https://registry.yarnpkg.com/node-forge/-/node-forge-0.7.1.tgz#9da611ea08982f4b94206b3beb4cc9665f20c300"
@@ -4978,6 +4982,13 @@ node-pre-gyp@^0.6.39:
     semver "^5.3.0"
     tar "^2.2.1"
     tar-pack "^3.4.0"
+
+node-tvdb@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/node-tvdb/-/node-tvdb-4.0.0.tgz#f552079dcaa9b7bf6dfff60a317fcfd6c5e28558"
+  dependencies:
+    lodash "^4.17.4"
+    node-fetch "^2.0.0"
 
 nopt@^4.0.1:
   version "4.0.1"
