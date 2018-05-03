@@ -6,7 +6,7 @@ import { observer, inject } from "mobx-react";
 import "./App.css";
 import SetPassword from "./components/SetPassword.jsx";
 import Login from "./components/Login.jsx";
-import Dashboard from "./components/Dashboard.jsx";
+import WatchList from "./components/WatchList.jsx";
 import Settings from "./components/Settings.jsx";
 
 const electron = window.require("electron");
@@ -42,7 +42,7 @@ class App extends Component {
     }
     let routes = (
       <Switch>
-        <Route path="/" exact component={Dashboard} />
+        <Route path="/" exact component={WatchList} />
         <Route path="/settings" exact component={Settings} />
         <Redirect from="*" to="/" />
       </Switch>
@@ -51,7 +51,7 @@ class App extends Component {
       <Menu>
         <Item>
           <NavLink to="/" exact>
-            Dashboard
+            WatchList
           </NavLink>
         </Item>
         <Item>

@@ -2,6 +2,9 @@ const electron = require("electron");
 const fse = require("fs-extra");
 const fs = require("fs");
 const ipcMain = electron.ipcMain;
+
+const TVDB = require("node-tvdb");
+const tvdb = new TVDB("AA93ACED7C86DB52");
 // Module to control application life.
 const app = electron.app;
 // Module to create native browser window.
@@ -60,6 +63,7 @@ app.on("activate", function() {
 
 const passPath = "./database/password.txt";
 const qualityPath = "./database/quality.txt";
+const watchListPath = "./database/watchlist.txt";
 
 ipcMain.on("userIsRegistered", (event, data) => {
   if (fse.pathExistsSync(passPath)) {
@@ -107,4 +111,30 @@ ipcMain.on("checkUserPassword", (event, data) => {
       access: false
     });
   }
+});
+
+ipcMain.on("getSeries", async (event, data) => {
+  const { query } = data;
+  try {
+    const results = (await tvdb.getSeriesByName(query)).map(result => {
+      const { id, seriesName } = result;
+      return { id, seriesName };
+    });
+    console.log(results);
+    mainWindow.webContents.send("response::getSeries", results);
+  } catch (e) {
+    console.log(e);
+  }
+});
+
+ipcMain.on("getWatchList", async (event, data) => {
+  if (!fse.pathExistsSync(watchListPath)) {
+    fse.writeFileSync(watchListPath, "[]");
+  }
+  const content = JSON.parse(fse.readFileSync(watchListPath).toString());
+  mainWindow.webContents.send("response::getWatchList", content);
+});
+
+ipcMain.on("setWatchList", async (event, data) => {
+  fse.writeFileSync(watchListPath, JSON.stringify(data));
 });
