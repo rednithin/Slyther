@@ -67,6 +67,8 @@ const passPath = "./database/password.txt";
 const qualityPath = "./database/quality.txt";
 const watchListPath = "./database/watchlist.txt";
 
+const watchListKeys = ["link", "slug", "title", "maxEpisodes"];
+
 ipcMain.on("userIsRegistered", (event, data) => {
   if (fse.pathExistsSync(passPath)) {
     mainWindow.webContents.send("response::userIsRegistered", {
@@ -127,9 +129,21 @@ ipcMain.on("getSeries", async (event, data) => {
 
 ipcMain.on("getWatchList", async (event, data) => {
   if (!fse.pathExistsSync(watchListPath)) {
-    fse.writeFileSync(watchListPath, "[]");
+    fse.writeFileSync(watchListPath, "");
   }
-  const content = JSON.parse(fse.readFileSync(watchListPath).toString());
+  const myString = fse.readFileSync(watchListPath).toString();
+  if (myString === "") {
+    mainWindow.webContents.send("response::getWatchList", []);
+    return;
+  }
+  const content = myString.split("#").map(elem => {
+    obj = {};
+    elem
+      .split("|")
+      .forEach((value, index) => (obj[watchListKeys[index]] = value));
+    return obj;
+  });
+  console.log(content);
   mainWindow.webContents.send("response::getWatchList", content);
 });
 
@@ -164,7 +178,12 @@ ipcMain.on("setWatchList", async (event, data) => {
     console.log(episodesList);
     console.log(data);
 
-    fse.writeFileSync(watchListPath, JSON.stringify(data));
+    // Change to FS Format.
+    const str = data
+      .map(elem => watchListKeys.map(key => elem[key]).join("|"))
+      .join("#");
+
+    fse.writeFileSync(watchListPath, str);
     mainWindow.webContents.send("response::setWatchList", data);
   } catch (e) {
     console.log(e);

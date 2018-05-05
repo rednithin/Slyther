@@ -48,7 +48,7 @@ class Download extends Component {
           onChange={this.handleEpisodeChange}
           value={this.state.selectedEpisode}
         >
-          {Array(this.state.selectedSerie.maxEpisodes)
+          {Array(+this.state.selectedSerie.maxEpisodes)
             .fill()
             .map((elem, index) => index + 1)
             .map(elem => <Option value={elem}>{elem}</Option>)}
