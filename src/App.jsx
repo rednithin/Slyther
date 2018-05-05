@@ -8,6 +8,7 @@ import SetPassword from "./components/SetPassword.jsx";
 import Login from "./components/Login.jsx";
 import WatchList from "./components/WatchList.jsx";
 import Settings from "./components/Settings.jsx";
+import Download from "./components/Download";
 
 const electron = window.require("electron");
 const { ipcRenderer } = electron;
@@ -44,6 +45,7 @@ class App extends Component {
       <Switch>
         <Route path="/" exact component={WatchList} />
         <Route path="/settings" exact component={Settings} />
+        <Route path="/download" exact component={Download} />
         <Redirect from="*" to="/" />
       </Switch>
     );
@@ -52,6 +54,11 @@ class App extends Component {
         <Item>
           <NavLink to="/" exact>
             WatchList
+          </NavLink>
+        </Item>
+        <Item>
+          <NavLink to="/download" exact>
+            Download
           </NavLink>
         </Item>
         <Item>

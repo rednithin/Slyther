@@ -4,7 +4,7 @@ import {
   Button,
   Popconfirm,
   Table,
-  Modal,
+  AutoComplete,
   notification,
   Select,
   Input
@@ -23,53 +23,27 @@ class MyComponent extends Component {
   state = {
     data: [],
     results: [],
-    filteredResults: [],
     visible: false
   };
 
   // Life Cycle Hooks.
   async componentDidMount() {
-    ipcRenderer.on("response::getSeries", (event, data) => {
-      this.setState({ results: data });
-    });
     ipcRenderer.send("getWatchList");
     ipcRenderer.on("response::getWatchList", (event, data) => {
       this.setState({ data });
     });
+    ipcRenderer.send("getSeries");
+    ipcRenderer.on("response::getSeries", (event, data) => {
+      this.setState({ results: data });
+    });
   }
-
-  // Modal Form Hooks.
-  showModal = () => {
-    this.setState({
-      visible: true
-    });
-  };
-  handleOk = e => {
-    console.log("Handle OK FUNCTION", this.state.filteredResults);
-    this.setState({
-      visible: false
-    });
-    const data = [...this.state.data, ...this.state.filteredResults];
-    this.setState({ data }, () => {
-      ipcRenderer.send("setWatchList", data);
-      this.setState({ results: [], filteredResults: [] });
-    });
-  };
-  handleCancel = e => {
-    console.log(e);
-    this.setState({
-      visible: false,
-      results: [],
-      filteredResults: []
-    });
-  };
 
   //Table Hooks
   columns = [
     {
       title: "Series Name",
-      dataIndex: "seriesName",
-      key: "seriesName"
+      dataIndex: "title",
+      key: "title"
     },
     {
       title: "Actions",
@@ -78,7 +52,7 @@ class MyComponent extends Component {
       render: record => (
         <Popconfirm
           title="Sure to delete?"
-          onConfirm={() => this.onDelete(record.id)}
+          onConfirm={() => this.onDelete(record.link)}
         >
           <a>Delete</a>
         </Popconfirm>
@@ -86,82 +60,44 @@ class MyComponent extends Component {
     }
   ];
 
-  handleSearch = async query => {
-    ipcRenderer.send("getSeries", { query });
-  };
-
-  handleSelect = selected => {
-    const filteredResults = this.state.results.filter(result => {
-      return selected.indexOf(result.id) > -1;
-    });
-    this.setState({ filteredResults });
-  };
-  onDelete = async id => {
-    const data = [...this.state.data].filter(item => item.id !== id);
+  onSelect = title => {
+    const element = this.state.results.filter(item => item.title === title);
+    const data = [...this.state.data, element[0]];
     this.setState({ data }, () => {
       ipcRenderer.send("setWatchList", data);
+      this.props.myStore.reRender = true;
+    });
+  };
+  onDelete = link => {
+    const data = [...this.state.data].filter(item => item.link !== link);
+    this.setState({ data }, () => {
+      ipcRenderer.send("setWatchList", data);
+      this.props.myStore.reRender = true;
     });
   };
 
   // Final Render Function
   // TODO Remove id's while describing
   render() {
+    let { results, data } = this.state;
+    results = results.map(element => element.title);
+    data = data.map(element => element.title);
+    const remainingNames = results.filter(item => data.indexOf(item) < 0);
+
     return (
       <div>
-        <div>
-          <Button
-            style={{ marginBottom: "20px" }}
-            type="primary"
-            onClick={this.showModal}
-          >
-            Add
-          </Button>
-          <Modal
-            title="Basic Modal"
-            visible={this.state.visible}
-            onOk={this.handleOk}
-            onCancel={this.handleCancel}
-          >
-            <Search
-              placeholder="Searcg for Anime."
-              onSearch={this.handleSearch}
-              style={{ width: 200 }}
-            />
-            <Select
-              mode="multiple"
-              style={{ width: "100%" }}
-              placeholder="Select Anime to add to watchlist."
-              onChange={this.handleSelect}
-            >
-              {this.state.results.map(result => (
-                <Option key={result.id} value={result.id}>
-                  {result.seriesName}
-                </Option>
-              ))}
-            </Select>
-          </Modal>
-        </div>
-        <Table
-          bordered
-          dataSource={this.state.data}
-          columns={this.columns}
-          // expandedRowRender={record => {
-          // return (
-          //     <List
-          //       itemLayout="horizontal"
-          //       dataSource={Object.keys(record)}
-          //       renderItem={key => (
-          //         <List.Item>
-          //           <span style={{ width: "100px" }}>
-          //             <strong>{key}</strong>
-          //           </span>
-          //           <span>{record[key]}</span>
-          //         </List.Item>
-          //       )}
-          //     />
-          //   );
-          // }}
+        <AutoComplete
+          style={{ width: 200 }}
+          dataSource={remainingNames}
+          placeholder="Add an Anime to the list."
+          filterOption={(inputValue, option) =>
+            option.props.children
+              .toUpperCase()
+              .indexOf(inputValue.toUpperCase()) !== -1
+          }
+          onSelect={this.onSelect}
         />
+        <Table bordered dataSource={this.state.data} columns={this.columns} />
       </div>
     );
   }

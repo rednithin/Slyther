@@ -2,9 +2,10 @@ const electron = require("electron");
 const fse = require("fs-extra");
 const fs = require("fs");
 const ipcMain = electron.ipcMain;
+const readLineSpecific = require("readline-specific");
 
-const TVDB = require("node-tvdb");
-const tvdb = new TVDB("AA93ACED7C86DB52");
+const HorribleSubs = require("horriblesubs-api");
+const horribleSubs = new HorribleSubs();
 // Module to control application life.
 const app = electron.app;
 // Module to create native browser window.
@@ -61,6 +62,7 @@ app.on("activate", function() {
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
 
+const database = "./database/";
 const passPath = "./database/password.txt";
 const qualityPath = "./database/quality.txt";
 const watchListPath = "./database/watchlist.txt";
@@ -114,15 +116,11 @@ ipcMain.on("checkUserPassword", (event, data) => {
 });
 
 ipcMain.on("getSeries", async (event, data) => {
-  const { query } = data;
   try {
-    const results = (await tvdb.getSeriesByName(query)).map(result => {
-      const { id, seriesName } = result;
-      return { id, seriesName };
-    });
-    console.log(results);
+    const results = await horribleSubs.getAllAnime();
     mainWindow.webContents.send("response::getSeries", results);
   } catch (e) {
+    mainWindow.webContents.send("response::getSeries", []);
     console.log(e);
   }
 });
@@ -136,5 +134,52 @@ ipcMain.on("getWatchList", async (event, data) => {
 });
 
 ipcMain.on("setWatchList", async (event, data) => {
-  fse.writeFileSync(watchListPath, JSON.stringify(data));
+  try {
+    console.log(data);
+    // Convert Episodes Dictionary to Array of Arrays
+    let episodesList = await Promise.all(
+      data.map(
+        async elem => (await horribleSubs.getAnimeData(elem)).episodes["1"]
+      )
+    );
+    episodesList = episodesList.map(episodes => {
+      let newEpisodes = [];
+      Object.keys(episodes)
+        .sort()
+        .forEach(key => newEpisodes.push(episodes[key]));
+      return newEpisodes;
+    });
+    // Append Max Episode To Data and also create a file
+    data = data.map((value, index) => {
+      value.maxEpisodes = episodesList[index].length;
+      delete value.hs_showid;
+      delete value.episodes;
+      fse.writeFileSync(
+        database + value.title + ".txt",
+        episodesList[index].map(elem => JSON.stringify(elem)).join("\n")
+      );
+      return value;
+    });
+
+    console.log(episodesList);
+    console.log(data);
+
+    fse.writeFileSync(watchListPath, JSON.stringify(data));
+  } catch (e) {
+    console.log(e);
+  }
+});
+
+ipcMain.on("getEpisode", (event, data) => {
+  readLineSpecific.oneline(
+    database + data.title + ".txt",
+    data.selectedEpisode,
+    (err, res) => {
+      if (err) {
+        console.log(err);
+        return;
+      }
+      mainWindow.webContents.send("response::getEpisode", JSON.parse(res));
+    }
+  );
 });
