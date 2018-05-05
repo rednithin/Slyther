@@ -33,12 +33,12 @@ class NormalLoginForm extends Component {
     this.props.form.validateFields((err, values) => {
       if (!err) {
         console.log("Received values of form: ", values);
-        const { password, quality } = values;
+        const { password } = values;
         if (values.password) {
           ipcRenderer.send("setUserPassword", { password });
         }
-        ipcRenderer.send("setQuality", { quality });
-        this.props.myStore.quality = quality;
+        // ipcRenderer.send("setQuality", { quality });
+        // this.props.myStore.quality = quality;
         notification.success({
           message: "Success"
         });
@@ -58,7 +58,7 @@ class NormalLoginForm extends Component {
             />
           )}
         </FormItem>
-        <FormItem>
+        {/* <FormItem>
           {getFieldDecorator("quality", {
             initialValue: this.props.myStore.quality
           })(
@@ -68,10 +68,10 @@ class NormalLoginForm extends Component {
               <Option value="1080">1080p</Option>
             </Select>
           )}
-        </FormItem>
+        </FormItem> */}
         <FormItem>
           <Button type="primary" htmlType="submit">
-            Save
+            Change Password
           </Button>
         </FormItem>
       </Form>

@@ -26,10 +26,10 @@ class App extends Component {
         this.props.myStore.userIsRegistered = true;
       }
     });
-    ipcRenderer.send("getQuality", null);
-    ipcRenderer.on("response::getQuality", (event, data) => {
-      this.props.myStore.quality = data.quality;
-    });
+    // ipcRenderer.send("getQuality", null);
+    // ipcRenderer.on("response::getQuality", (event, data) => {
+    //   this.props.myStore.quality = data.quality;
+    // });
   }
   render() {
     if (this.props.myStore.userIsRegistered === false) {

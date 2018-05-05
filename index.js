@@ -86,23 +86,23 @@ ipcMain.on("setUserPassword", (event, data) => {
   fse.writeFileSync(passPath, data.password);
 });
 
-ipcMain.on("setQuality", (event, data) => {
-  fse.removeSync(qualityPath);
-  fse.writeFileSync(qualityPath, data.quality);
-});
+// ipcMain.on("setQuality", (event, data) => {
+//   fse.removeSync(qualityPath);
+//   fse.writeFileSync(qualityPath, data.quality);
+// });
 
-ipcMain.on("getQuality", () => {
-  if (fse.pathExistsSync(qualityPath)) {
-    const quality = fse.readFileSync(qualityPath).toString();
-    mainWindow.webContents.send("response::getQuality", {
-      quality
-    });
-  } else {
-    mainWindow.webContents.send("response::getQuality", {
-      quality: "480"
-    });
-  }
-});
+// ipcMain.on("getQuality", () => {
+//   if (fse.pathExistsSync(qualityPath)) {
+//     const quality = fse.readFileSync(qualityPath).toString();
+//     mainWindow.webContents.send("response::getQuality", {
+//       quality
+//     });
+//   } else {
+//     mainWindow.webContents.send("response::getQuality", {
+//       quality: "480"
+//     });
+//   }
+// });
 
 ipcMain.on("checkUserPassword", (event, data) => {
   const actualPassword = fse.readFileSync(passPath).toString();
