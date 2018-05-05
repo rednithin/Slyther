@@ -2,7 +2,6 @@ const electron = require("electron");
 const fse = require("fs-extra");
 const fs = require("fs");
 const ipcMain = electron.ipcMain;
-const readLineSpecific = require("readline-specific");
 
 const HorribleSubs = require("horriblesubs-api");
 const horribleSubs = new HorribleSubs();
@@ -215,15 +214,22 @@ ipcMain.on("setWatchList", async (event, data) => {
 });
 
 ipcMain.on("getEpisode", (event, data) => {
-  readLineSpecific.oneline(
-    database + data.title + ".txt",
-    data.selectedEpisode,
-    (err, res) => {
-      if (err) {
-        console.log(err);
-        return;
-      }
-      mainWindow.webContents.send("response::getEpisode", JSON.parse(res));
-    }
+  const filename = database + data.title + ".txt";
+  const fd = fs.openSync(filename, "r");
+  const buffer = new Buffer(fixedLength);
+  fs.readSync(
+    fd,
+    buffer,
+    0,
+    fixedLength,
+    (data.selectedEpisode - 1) * fixedLength
   );
+  const myArray = buffer.toString().split("||");
+  const qualities = myArray[0].split("|");
+  const links = myArray[1].split("|");
+  obj = {};
+  qualities.forEach((quality, index) => {
+    obj[quality] = links[index];
+  });
+  mainWindow.webContents.send("response::getEpisode", obj);
 });
