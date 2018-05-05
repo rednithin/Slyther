@@ -66,6 +66,7 @@ const database = "./database/";
 const passPath = "./database/password.txt";
 const qualityPath = "./database/quality.txt";
 const watchListPath = "./database/watchlist.txt";
+const fixedLength = 3000;
 
 const watchListKeys = ["link", "slug", "title", "maxEpisodes"];
 
@@ -161,8 +162,31 @@ ipcMain.on("setWatchList", async (event, data) => {
       Object.keys(episodes)
         .sort()
         .forEach(key => newEpisodes.push(episodes[key]));
+      newEpisodes = newEpisodes.map(elem => {
+        newElement = {};
+        Object.keys(elem).forEach(key => {
+          newElement[key] = elem[key].url;
+        });
+        return newElement;
+      });
       return newEpisodes;
     });
+    episodesList = episodesList.map(episodes =>
+      episodes.map(episode => {
+        tempStr = "";
+        tempStr += Object.keys(episode)
+          .sort()
+          .join("|");
+        tempStr += "||";
+        tempStr += Object.keys(episode)
+          .sort()
+          .map(key => episode[key])
+          .join("|");
+        tempStr += "||";
+        tempStr += "0".repeat(fixedLength - tempStr.length);
+        return tempStr;
+      })
+    );
     // Append Max Episode To Data and also create a file
     data = data.map((value, index) => {
       value.maxEpisodes = episodesList[index].length;
@@ -170,7 +194,7 @@ ipcMain.on("setWatchList", async (event, data) => {
       delete value.episodes;
       fse.writeFileSync(
         database + value.title + ".txt",
-        episodesList[index].map(elem => JSON.stringify(elem)).join("\n")
+        episodesList[index].join("")
       );
       return value;
     });

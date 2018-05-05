@@ -61,7 +61,7 @@ class Download extends Component {
           {Object.keys(this.state.episode).map(quality => (
             <Button
               onClick={() => {
-                shell.openExternal(this.state.episode[quality].url);
+                shell.openExternal(this.state.episode[quality]);
               }}
             >
               {quality}
