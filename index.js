@@ -1,6 +1,8 @@
 const electron = require("electron");
 const fse = require("fs-extra");
 const fs = require("fs");
+const passwordHash = require("password-hash");
+
 const ipcMain = electron.ipcMain;
 
 const HorribleSubs = require("horriblesubs-api");
@@ -83,7 +85,7 @@ ipcMain.on("userIsRegistered", (event, data) => {
 
 ipcMain.on("setUserPassword", (event, data) => {
   fse.removeSync(passPath);
-  fse.writeFileSync(passPath, data.password);
+  fse.writeFileSync(passPath, passwordHash.generate(data.password));
 });
 
 // ipcMain.on("setQuality", (event, data) => {
@@ -105,8 +107,8 @@ ipcMain.on("setUserPassword", (event, data) => {
 // });
 
 ipcMain.on("checkUserPassword", (event, data) => {
-  const actualPassword = fse.readFileSync(passPath).toString();
-  if (data.password === actualPassword) {
+  const hashedPassword = fse.readFileSync(passPath).toString();
+  if (passwordHash.verify(data.password, hashedPassword)) {
     mainWindow.webContents.send("response::checkUserPassword", {
       access: true
     });
