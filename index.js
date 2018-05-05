@@ -165,6 +165,7 @@ ipcMain.on("setWatchList", async (event, data) => {
     console.log(data);
 
     fse.writeFileSync(watchListPath, JSON.stringify(data));
+    mainWindow.webContents.send("response::setWatchList", data);
   } catch (e) {
     console.log(e);
   }

@@ -20,6 +20,10 @@ const { Option } = Select;
 @observer
 class NormalLoginForm extends Component {
   componentDidMount() {
+    ipcRenderer.send("getWatchList");
+    ipcRenderer.on("response::getWatchList", (event, data) => {
+      this.props.myStore.series = data;
+    });
     ipcRenderer.on("response::checkUserPassword", (event, data) => {
       if (data.access) this.props.myStore.isLoggedIn = true;
     });

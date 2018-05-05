@@ -34,6 +34,9 @@ class MyComponent extends Component {
         this.props.myStore.series = this.state.data;
       });
     });
+    ipcRenderer.on("response::setWatchList", (event, data) => {
+      this.props.myStore.series = data;
+    });
     ipcRenderer.send("getSeries");
     ipcRenderer.on("response::getSeries", (event, data) => {
       this.setState({ results: data });
@@ -67,14 +70,12 @@ class MyComponent extends Component {
     const data = [...this.state.data, element[0]];
     this.setState({ data }, () => {
       ipcRenderer.send("setWatchList", data);
-      this.props.myStore.series = this.state.data;
     });
   };
   onDelete = link => {
     const data = [...this.state.data].filter(item => item.link !== link);
     this.setState({ data }, () => {
       ipcRenderer.send("setWatchList", data);
-      this.props.myStore.series = this.state.data;
     });
   };
 

@@ -11,6 +11,10 @@ const { Option } = Select;
 @observer
 class Download extends Component {
   componentDidMount() {
+    ipcRenderer.send("getWatchList");
+    ipcRenderer.on("response::getWatchList", (event, data) => {
+      this.props.myStore.series = data;
+    });
     ipcRenderer.on("response::getEpisode", (event, data) => {
       this.setState({ episode: data });
     });
