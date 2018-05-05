@@ -30,7 +30,9 @@ class MyComponent extends Component {
   async componentDidMount() {
     ipcRenderer.send("getWatchList");
     ipcRenderer.on("response::getWatchList", (event, data) => {
-      this.setState({ data });
+      this.setState({ data }, () => {
+        this.props.myStore.series = this.state.data;
+      });
     });
     ipcRenderer.send("getSeries");
     ipcRenderer.on("response::getSeries", (event, data) => {
@@ -65,14 +67,14 @@ class MyComponent extends Component {
     const data = [...this.state.data, element[0]];
     this.setState({ data }, () => {
       ipcRenderer.send("setWatchList", data);
-      this.props.myStore.reRender = true;
+      this.props.myStore.series = this.state.data;
     });
   };
   onDelete = link => {
     const data = [...this.state.data].filter(item => item.link !== link);
     this.setState({ data }, () => {
       ipcRenderer.send("setWatchList", data);
-      this.props.myStore.reRender = true;
+      this.props.myStore.series = this.state.data;
     });
   };
 

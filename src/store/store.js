@@ -5,6 +5,7 @@ class Store {
   @observable isLoggedIn = false;
   @observable quality = "480";
   @observable reRender = false;
+  @observable series = [];
 }
 
 export default Store;

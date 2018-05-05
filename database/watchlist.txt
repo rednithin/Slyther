@@ -1,1 +1,1 @@
-[{"link":"/shows/tokyo-ghoul-re","maxEpisodes":5,"slug":"tokyo-ghoul-re","title":"Tokyo Ghoul re"},{"link":"/shows/boku-no-hero-academia","maxEpisodes":43,"slug":"boku-no-hero-academia","title":"Boku no Hero Academia"},{"link":"/shows/steins-gate-0","slug":"steins-gate-0","title":"Steins Gate 0","maxEpisodes":4}]
+[{"link":"/shows/tokyo-ghoul-re","maxEpisodes":5,"slug":"tokyo-ghoul-re","title":"Tokyo Ghoul re"},{"link":"/shows/boku-no-hero-academia","maxEpisodes":43,"slug":"boku-no-hero-academia","title":"Boku no Hero Academia"}]

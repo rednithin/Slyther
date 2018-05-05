@@ -14,13 +14,8 @@ class Download extends Component {
     ipcRenderer.on("response::getEpisode", (event, data) => {
       this.setState({ episode: data });
     });
-    ipcRenderer.send("getWatchList");
-    ipcRenderer.on("response::getWatchList", (event, data) => {
-      this.setState({ series: data });
-    });
   }
   state = {
-    series: [],
     episode: null,
     selectedSerie: null,
     selectedEpisode: null
@@ -40,10 +35,6 @@ class Download extends Component {
     });
   };
   render() {
-    if (this.props.myStore.reRender) {
-      ipcRenderer.send("getWatchList");
-      this.props.myStore.reRender = false;
-    }
     let selectEpisode = null;
     let showDownload = null;
     if (this.state.selectedSerie !== null) {
@@ -78,7 +69,7 @@ class Download extends Component {
     return (
       <div>
         <Select style={{ width: 250 }} onChange={this.handleSerieChange}>
-          {this.state.series.map(serie => (
+          {this.props.myStore.series.map(serie => (
             <Option value={JSON.stringify(serie)}>{serie.title}</Option>
           ))}
         </Select>
