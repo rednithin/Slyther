@@ -1,1 +1,1 @@
-/shows/boku-no-hero-academia|boku-no-hero-academia|Boku no Hero Academia|45#/shows/tokyo-ghoul|tokyo-ghoul|Tokyo Ghoul|12#/shows/boruto-naruto-next-generations|boruto-naruto-next-generations|Boruto - Naruto Next Generations|58
+/shows/tokyo-ghoul|tokyo-ghoul|Tokyo Ghoul|12|01#/shows/shokugeki-no-soma|shokugeki-no-souma|Shokugeki no Soma S2|24|01#/shows/tokyo-ghoul-re|tokyo-ghoul-re|Tokyo Ghoul re|7|01#/shows/black-clover|black-clover|Black Clover|32|01

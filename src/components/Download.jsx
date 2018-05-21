@@ -61,8 +61,17 @@ class Download extends Component {
             >
               {Array(+this.state.selectedSerie.maxEpisodes)
                 .fill()
-                .map((elem, index) => index + 1)
-                .map(elem => <Option value={elem}>{elem}</Option>)}
+                .map(
+                  (elem, index) =>
+                    index + +this.state.selectedSerie.startEpisode
+                )
+                .map(elem => (
+                  <Option
+                    value={elem - this.state.selectedSerie.startEpisode + 1}
+                  >
+                    {elem}
+                  </Option>
+                ))}
             </Select>
           </Card>
         </Col>

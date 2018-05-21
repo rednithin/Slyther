@@ -99,7 +99,7 @@ const qualityPath = "./database/quality.txt";
 const watchListPath = "./database/watchlist.txt";
 const fixedLength = 3000;
 
-const watchListKeys = ["link", "slug", "title", "maxEpisodes"];
+const watchListKeys = ["link", "slug", "title", "maxEpisodes", "startEpisode"];
 
 ipcMain.on("userIsRegistered", (event, data) => {
   if (fse.pathExistsSync(passPath)) {
@@ -175,21 +175,20 @@ ipcMain.on("getWatchList", async (event, data) => {
       .forEach((value, index) => (obj[watchListKeys[index]] = value));
     return obj;
   });
-  console.log(content);
   mainWindow.webContents.send("response::getWatchList", content);
 });
 
 ipcMain.on("setWatchList", async (event, data) => {
   try {
-    console.log(data);
     // Convert Episodes Dictionary to Array of Arrays
     let episodesList = await Promise.all(
       data.map(
         async elem => (await horribleSubs.getAnimeData(elem)).episodes["1"]
       )
     );
-    episodesList = episodesList.map(episodes => {
+    episodesList = episodesList.map((episodes, index) => {
       let newEpisodes = [];
+      data[index].startEpisode = Object.keys(episodes).sort()[0];
       Object.keys(episodes)
         .sort()
         .forEach(key => newEpisodes.push(episodes[key]));
@@ -229,9 +228,6 @@ ipcMain.on("setWatchList", async (event, data) => {
       );
       return value;
     });
-
-    console.log(episodesList);
-    console.log(data);
 
     // Change to FS Format.
     const str = data
