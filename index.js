@@ -1,7 +1,6 @@
 const electron = require("electron");
 const fse = require("fs-extra");
 const fs = require("fs");
-const passwordHash = require("password-hash");
 const path = require("path");
 const url = require("url");
 
@@ -100,6 +99,17 @@ const watchListPath = "./database/watchlist.txt";
 const fixedLength = 3000;
 
 const watchListKeys = ["link", "slug", "title", "maxEpisodes", "startEpisode"];
+const multipliers = [1, 256, 256 ** 2, 256 ** 3];
+
+const computeHash = s => {
+  s = s.split("").map(elem => elem.charCodeAt(0));
+  sum = 0;
+  s.forEach((code, index) => {
+    sum += code * multipliers[index % 4];
+    sum = sum % 10 ** 9;
+  });
+  return sum;
+};
 
 ipcMain.on("userIsRegistered", (event, data) => {
   if (fse.pathExistsSync(passPath)) {
@@ -115,30 +125,12 @@ ipcMain.on("userIsRegistered", (event, data) => {
 
 ipcMain.on("setUserPassword", (event, data) => {
   fse.removeSync(passPath);
-  fse.writeFileSync(passPath, passwordHash.generate(data.password));
+  fse.writeFileSync(passPath, computeHash(data.password));
 });
-
-// ipcMain.on("setQuality", (event, data) => {
-//   fse.removeSync(qualityPath);
-//   fse.writeFileSync(qualityPath, data.quality);
-// });
-
-// ipcMain.on("getQuality", () => {
-//   if (fse.pathExistsSync(qualityPath)) {
-//     const quality = fse.readFileSync(qualityPath).toString();
-//     mainWindow.webContents.send("response::getQuality", {
-//       quality
-//     });
-//   } else {
-//     mainWindow.webContents.send("response::getQuality", {
-//       quality: "480"
-//     });
-//   }
-// });
 
 ipcMain.on("checkUserPassword", (event, data) => {
   const hashedPassword = fse.readFileSync(passPath).toString();
-  if (passwordHash.verify(data.password, hashedPassword)) {
+  if (computeHash(data.password) === +hashedPassword) {
     mainWindow.webContents.send("response::checkUserPassword", {
       access: true
     });
