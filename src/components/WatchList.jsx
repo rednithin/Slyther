@@ -53,7 +53,7 @@ class MyComponent extends Component {
       title: "Series Name",
       dataIndex: "title",
       key: "title",
-      sorter: (a, b) => a.length - b.length
+      sorter: (a, b) => a.title.length - b.title.length
     },
     {
       title: "Actions",
