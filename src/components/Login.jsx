@@ -33,6 +33,9 @@ class NormalLoginForm extends Component {
       }
     });
   }
+  componentWillUnmount() {
+    ipcRenderer.removeAllListeners("response::checkUserPassword");
+  }
   handleSubmit = e => {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {

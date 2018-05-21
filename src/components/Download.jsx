@@ -19,6 +19,10 @@ class Download extends Component {
       this.setState({ episode: data });
     });
   }
+  componentWillUnmount() {
+    ipcRenderer.removeAllListeners("response::getWatchList");
+    ipcRenderer.removeAllListeners("response::getEpisode");
+  }
   state = {
     episode: null,
     selectedSerie: null,

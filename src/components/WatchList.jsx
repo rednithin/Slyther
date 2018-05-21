@@ -46,7 +46,11 @@ class MyComponent extends Component {
       this.setState({ results: data });
     });
   }
-
+  componentWillUnmount() {
+    ipcRenderer.removeAllListeners("response::getWatchList");
+    ipcRenderer.removeAllListeners("response::setWatchList");
+    ipcRenderer.removeAllListeners("response::getSeries");
+  }
   //Table Hooks
   columns = [
     {

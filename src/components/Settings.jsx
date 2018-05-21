@@ -31,6 +31,10 @@ class NormalLoginForm extends Component {
       if (data.access) this.props.myStore.isLoggedIn = true;
     });
   }
+  componentWillUnmount() {
+    ipcRenderer.removeAllListeners("response::getWatchList");
+    ipcRenderer.removeAllListeners("response::checkUserPassword");
+  }
   handleSubmit = e => {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
