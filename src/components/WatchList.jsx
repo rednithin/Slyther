@@ -7,9 +7,13 @@ import {
   AutoComplete,
   notification,
   Select,
+  Card,
+  Row,
+  Col,
   Input
 } from "antd";
 import { observer, inject } from "mobx-react";
+import Column from "antd/lib/table/Column";
 
 const electron = window.require("electron");
 const { ipcRenderer } = electron;
@@ -48,7 +52,8 @@ class MyComponent extends Component {
     {
       title: "Series Name",
       dataIndex: "title",
-      key: "title"
+      key: "title",
+      sorter: (a, b) => a.length - b.length
     },
     {
       title: "Actions",
@@ -88,20 +93,31 @@ class MyComponent extends Component {
     const remainingNames = results.filter(item => data.indexOf(item) < 0);
 
     return (
-      <div>
-        <AutoComplete
-          style={{ width: 200 }}
-          dataSource={remainingNames}
-          placeholder="Add an Anime to the list."
-          filterOption={(inputValue, option) =>
-            option.props.children
-              .toUpperCase()
-              .indexOf(inputValue.toUpperCase()) !== -1
-          }
-          onSelect={this.onSelect}
-        />
-        <Table bordered dataSource={this.state.data} columns={this.columns} />
-      </div>
+      <Row type="flex" justify="center">
+        <Col span="17" lg={{ span: 10 }}>
+          <Card title="Add Anime To WatchList">
+            <AutoComplete
+              style={{ width: "100%" }}
+              dataSource={remainingNames}
+              placeholder="Search By Anime Name"
+              filterOption={(inputValue, option) =>
+                option.props.children
+                  .toUpperCase()
+                  .indexOf(inputValue.toUpperCase()) !== -1
+              }
+              onSelect={this.onSelect}
+            />
+          </Card>
+        </Col>
+        <Col span="24" style={{ paddingTop: 20 }}>
+          <Table
+            pagination={{ pageSize: 4 }}
+            bordered
+            dataSource={this.state.data}
+            columns={this.columns}
+          />
+        </Col>
+      </Row>
     );
   }
 }

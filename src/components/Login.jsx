@@ -1,5 +1,15 @@
 import React, { Component } from "react";
-import { Form, Icon, Input, Button, Checkbox, notification } from "antd";
+import {
+  Form,
+  Icon,
+  Input,
+  Button,
+  Checkbox,
+  Row,
+  Col,
+  Card,
+  notification
+} from "antd";
 import { inject, observer } from "mobx-react";
 
 const FormItem = Form.Item;
@@ -36,24 +46,34 @@ class NormalLoginForm extends Component {
   render() {
     const { getFieldDecorator } = this.props.form;
     return (
-      <Form onSubmit={this.handleSubmit}>
-        <FormItem>
-          {getFieldDecorator("password", {
-            rules: [{ required: true, message: "Please input your Password!" }]
-          })(
-            <Input
-              prefix={<Icon type="lock" style={{ color: "rgba(0,0,0,.25)" }} />}
-              type="password"
-              placeholder="Password"
-            />
-          )}
-        </FormItem>
-        <FormItem>
-          <Button type="primary" htmlType="submit">
-            Login
-          </Button>
-        </FormItem>
-      </Form>
+      <Row type="flex" justify="center">
+        <Col span="24" lg={{ span: 8 }} md={{ span: 12 }}>
+          <Card title="Login" style={{ marginTop: "50px" }}>
+            <Form onSubmit={this.handleSubmit}>
+              <FormItem>
+                {getFieldDecorator("password", {
+                  rules: [
+                    { required: true, message: "Please input your Password!" }
+                  ]
+                })(
+                  <Input
+                    prefix={
+                      <Icon type="lock" style={{ color: "rgba(0,0,0,.25)" }} />
+                    }
+                    type="password"
+                    placeholder="Password"
+                  />
+                )}
+              </FormItem>
+              <FormItem>
+                <Button type="primary" htmlType="submit">
+                  Login
+                </Button>
+              </FormItem>
+            </Form>
+          </Card>
+        </Col>
+      </Row>
     );
   }
 }

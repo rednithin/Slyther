@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from "react";
 import { Route, Switch, NavLink, Redirect } from "react-router-dom";
-import { Layout, Menu } from "antd";
+import { Layout, Menu, Row, Col, Button } from "antd";
 import { observer, inject } from "mobx-react";
 
 import "./App.css";
@@ -14,7 +14,7 @@ const electron = window.require("electron");
 const { ipcRenderer } = electron;
 
 const { Item } = Menu;
-const { Header, Sider, Content } = Layout;
+const { Header, Sider, Content, Footer } = Layout;
 
 @inject("myStore")
 @observer
@@ -50,7 +50,7 @@ class App extends Component {
       </Switch>
     );
     let navLinks = (navLinks = (
-      <Menu>
+      <Menu mode="horizontal">
         <Item>
           <NavLink to="/" exact>
             WatchList
@@ -70,19 +70,28 @@ class App extends Component {
     ));
     return (
       <Layout style={{ height: "100vh" }}>
-        <Sider width={220} style={{ backgroundColor: "white" }}>
-          {navLinks}
-        </Sider>
-        <Content
-          style={{
-            padding: "14px",
-            borderLeftColor: "gray",
-            borderLeftWidth: "2px",
-            height: "100%"
-          }}
-        >
-          {routes}
+        <Header style={{ backgroundColor: "white" }}>{navLinks}</Header>
+        <Content>
+          <Row type="flex" justify="center">
+            <Col span="20" style={{ marginTop: 15 }}>
+              {routes}
+            </Col>
+          </Row>
         </Content>
+        <Footer>
+          <Row type="flex" justify="space-between">
+            <Col>Disclaimer: For Educational Purposes only.</Col>
+            <Col>
+              <Button
+                onClick={() => {
+                  this.props.myStore.isLoggedIn = false;
+                }}
+              >
+                Logout
+              </Button>
+            </Col>
+          </Row>
+        </Footer>
       </Layout>
     );
   }

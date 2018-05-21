@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Select, Button } from "antd";
+import { Select, Button, Row, Col, Card } from "antd";
 import { observer, inject } from "mobx-react";
 
 const electron = window.require("electron");
@@ -43,45 +43,74 @@ class Download extends Component {
     let showDownload = null;
     if (this.state.selectedSerie !== null) {
       selectEpisode = (
-        <Select
-          style={{ width: 250 }}
-          onChange={this.handleEpisodeChange}
-          value={this.state.selectedEpisode}
+        <Col
+          span="17"
+          lg={{ span: 10 }}
+          style={{ paddingLeft: 20, paddingRight: 20, paddingBottom: 20 }}
         >
-          {Array(+this.state.selectedSerie.maxEpisodes)
-            .fill()
-            .map((elem, index) => index + 1)
-            .map(elem => <Option value={elem}>{elem}</Option>)}
-        </Select>
+          <Card title="Episode">
+            <Select
+              style={{ width: "100%" }}
+              placeholder="Select Episode"
+              onChange={this.handleEpisodeChange}
+              value={this.state.selectedEpisode}
+            >
+              {Array(+this.state.selectedSerie.maxEpisodes)
+                .fill()
+                .map((elem, index) => index + 1)
+                .map(elem => <Option value={elem}>{elem}</Option>)}
+            </Select>
+          </Card>
+        </Col>
       );
     }
     if (this.state.episode !== null) {
       showDownload = (
-        <div>
-          {Object.keys(this.state.episode).map(quality => (
-            <Button
-              onClick={() => {
-                shell.openExternal(this.state.episode[quality]);
-              }}
-            >
-              {quality}
-            </Button>
-          ))}
-        </div>
+        <Col
+          span="17"
+          lg={{ span: 10 }}
+          style={{ paddingLeft: 20, paddingRight: 20, paddingBottom: 20 }}
+        >
+          <Card title="Download">
+            <Row type="flex" justify="space-between">
+              {Object.keys(this.state.episode).map(quality => (
+                <Col>
+                  <Button
+                    onClick={() => {
+                      shell.openExternal(this.state.episode[quality]);
+                    }}
+                  >
+                    {quality}
+                  </Button>
+                </Col>
+              ))}
+            </Row>
+          </Card>
+        </Col>
       );
     }
     return (
-      <div>
-        <Select style={{ width: 250 }} onChange={this.handleSerieChange}>
-          {this.props.myStore.series.map(serie => (
-            <Option value={JSON.stringify(serie)}>{serie.title}</Option>
-          ))}
-        </Select>
+      <Row type="flex" justify="space-around">
+        <Col
+          span="17"
+          lg={{ span: 10 }}
+          style={{ paddingLeft: 20, paddingRight: 20, paddingBottom: 20 }}
+        >
+          <Card title="Series">
+            <Select
+              style={{ width: "100%" }}
+              placeholder="Select Series"
+              onChange={this.handleSerieChange}
+            >
+              {this.props.myStore.series.map(serie => (
+                <Option value={JSON.stringify(serie)}>{serie.title}</Option>
+              ))}
+            </Select>
+          </Card>
+        </Col>
         {selectEpisode}
-        <br />
-        <br />
         {showDownload}
-      </div>
+      </Row>
     );
   }
 }

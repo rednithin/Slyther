@@ -6,6 +6,9 @@ import {
   Button,
   Checkbox,
   Select,
+  Row,
+  Col,
+  Card,
   notification
 } from "antd";
 import { inject, observer } from "mobx-react";
@@ -37,8 +40,6 @@ class NormalLoginForm extends Component {
         if (values.password) {
           ipcRenderer.send("setUserPassword", { password });
         }
-        // ipcRenderer.send("setQuality", { quality });
-        // this.props.myStore.quality = quality;
         notification.success({
           message: "Success"
         });
@@ -48,33 +49,30 @@ class NormalLoginForm extends Component {
   render() {
     const { getFieldDecorator } = this.props.form;
     return (
-      <Form onSubmit={this.handleSubmit}>
-        <FormItem>
-          {getFieldDecorator("password")(
-            <Input
-              prefix={<Icon type="lock" style={{ color: "rgba(0,0,0,.25)" }} />}
-              type="password"
-              placeholder="Set New Password"
-            />
-          )}
-        </FormItem>
-        {/* <FormItem>
-          {getFieldDecorator("quality", {
-            initialValue: this.props.myStore.quality
-          })(
-            <Select>
-              <Option value="480">480p</Option>
-              <Option value="720">720p</Option>
-              <Option value="1080">1080p</Option>
-            </Select>
-          )}
-        </FormItem> */}
-        <FormItem>
-          <Button type="primary" htmlType="submit">
-            Change Password
-          </Button>
-        </FormItem>
-      </Form>
+      <Row type="flex" justify="center">
+        <Col span="24" lg={{ span: 8 }} md={{ span: 12 }}>
+          <Card title="Change Password">
+            <Form onSubmit={this.handleSubmit}>
+              <FormItem>
+                {getFieldDecorator("password")(
+                  <Input
+                    prefix={
+                      <Icon type="lock" style={{ color: "rgba(0,0,0,.25)" }} />
+                    }
+                    type="password"
+                    placeholder="Type New Password"
+                  />
+                )}
+              </FormItem>
+              <FormItem>
+                <Button type="primary" htmlType="submit">
+                  Change Password
+                </Button>
+              </FormItem>
+            </Form>
+          </Card>
+        </Col>
+      </Row>
     );
   }
 }
