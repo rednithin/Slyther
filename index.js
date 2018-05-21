@@ -44,7 +44,11 @@ const menuTemplate = [
 
 function createWindow() {
   // Create the browser window.
-  mainWindow = new BrowserWindow({ minWidth: 1200, minHeight: 700 });
+  mainWindow = new BrowserWindow({
+    minWidth: 1200,
+    minHeight: 700,
+    title: "Slyther - Anime Downloader"
+  });
 
   // and load the index.html of the app.
   mainWindow.loadURL("http://localhost:3000");
